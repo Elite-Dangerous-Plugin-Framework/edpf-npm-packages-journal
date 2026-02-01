@@ -12,7 +12,7 @@ permissions:
   actions: read
 
 jobs:
-  bump-schema:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,6 +21,10 @@ jobs:
         with:
           submodules: true
           fetch-depth: 0   # required for tagging + pushing
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
         with:
@@ -37,7 +41,5 @@ jobs:
           }
       - name: Build the package
         run: bun run ./generate.ts
-      - name: Login against npm using OIDC
-        run: bunx npm login --auth-type=oidc --registry=https://registry.npmjs.org
-      - name: Release the package with npm public (using bunx)
-        run: bunx npm publish --provenance --access public
+      - name: Release the package
+        run: npm publish
