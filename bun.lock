@@ -6,10 +6,10 @@
       "name": "edpf-journal",
       "devDependencies": {
         "@apidevtools/json-schema-ref-parser": "^14.2.1",
-        "@types/node": "^24.4.0",
-        "glob": "^11.0.3",
+        "@types/node": "^24.10.9",
+        "glob": "^11.1.0",
         "json-schema-to-typescript": "^15.0.4",
-        "typescript": "^5.5.0",
+        "typescript": "^5.9.3",
       },
     },
   },
