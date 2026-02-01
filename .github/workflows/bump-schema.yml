@@ -33,4 +33,4 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Bump Schema if there is an update and generate relevant commit / tag
-        run: bun run ./bump-schema.ts
+        run: bun run ./bumpSubmoduleAndVersion.ts
