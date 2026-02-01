@@ -6,10 +6,8 @@ on:
       - '0.[0-9]+.[0-9]+'
 
 permissions:
-  contents: read
-  packages: write
   id-token: write # Token is needed here for OIDC
-  actions: read
+  contents: read
 
 jobs:
   publish:
@@ -39,7 +37,7 @@ jobs:
         run: bun run ./generate.ts
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           registry-url: 'https://registry.npmjs.org'
       - name: Sanity check whoami
         run: npm whoami
