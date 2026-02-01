@@ -54,8 +54,8 @@ console.log(`bumped version from v${oldVersion} to v${newVersion}`);
 await $`git add schema package.json`;
 await $`git commit -m ${`chore: bump schema to ${newVersion}`}`;
 await $`git tag ${newVersion}`;
-//await $`git push`;
-//await $`git push --tags`;
+await $`git push`;
+await $`git push --tags`;
 
 console.log("commited, pushed, and tagged for version v" + newVersion);
 
