@@ -39,7 +39,5 @@ jobs:
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
-      - name: Sanity check whoami
-        run: npm whoami
       - name: Release the package
         run: npm publish
