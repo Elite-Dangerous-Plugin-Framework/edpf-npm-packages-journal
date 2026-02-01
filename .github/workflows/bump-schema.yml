@@ -32,5 +32,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Install deps
+        run: bun ci
       - name: Bump Schema if there is an update and generate relevant commit / tag
         run: bun run ./bumpSubmoduleAndVersion.ts
