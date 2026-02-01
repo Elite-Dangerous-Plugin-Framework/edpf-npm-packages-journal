@@ -11,11 +11,23 @@ This repository contains the conversion and generator code for https://www.npmjs
 
 ```sh
 npm install @elite-dangerous-plugin-framework/journal
+pnpm install @elite-dangerous-plugin-framework/journal
+bun install @elite-dangerous-plugin-framework/journal
+# or your preferred package manager
 ```
 
 ## Usage
 
 ```ts
+import {
+  parseWithBigInt,
+  parseWithLossyIntegers,
+} from "@elite-dangerous-plugin-framework/journal";
+// if you need type tree-shaking, you can directly import the events individually using their default export.
+// This works for regular and "bi" (bigint) event variant.
+import type SendText from "@elite-dangerous-plugin-framework/journal/events/SendText";
+import type SendTextBI from "@elite-dangerous-plugin-framework/journal/events/bi/SendText";
+
 const input = `
 { "timestamp":"2026-02-01T01:08:59Z", "event":"RefuelAll", "Cost":79, "Amount":1.557032 }
 { "timestamp":"2026-02-01T01:08:59Z", "event":"RepairAll", "Cost":23485 }
@@ -25,8 +37,38 @@ const input = `
 { "timestamp":"2026-02-01T01:13:42Z", "event":"Music", "MusicTrack":"GalaxyMap" }
 { "timestamp":"2026-02-01T01:14:05Z", "event":"Music", "MusicTrack":"Exploration" }
 { "timestamp":"2026-02-01T01:14:19Z", "event":"Shutdown" }
-`.split("\n").map(e => e.trim())
+`
+  .split("\n")
+  .map((e) => e.trim())
+  // removing empty lines
+  .filter(Boolean)
+
+// All non-float numbers are converted to BigInts. Use this if
+// you rely on IDs, as the regular number type is not precise enough
+const parsedWithBigIntSupport = input.map((e) => parseWithBigInt(e)).forEach(e => {
+    switch(e.event) {
+        // parseWithBigInt / parseWithLossyIntegers returns a JournalEvent_BI / JournalEvent
+        // it's event property can be switched on, which will give you strong typing for the relevant event.
+        case "WingJoin": ...
+        case "WingLeave": ...
+        case "WingAdd": ...
+        case ...
+        ...
+    }
+})
+const parsedWithRegularNumbers = input.map((e) => parseWithLossyIntegers(e));
+
+function someFunctionThatWantsAMessageSent(msg: SendText | SendTextBI) {
+  console.log(
+    `You wrote in channel ${msg.To} at ${msg.timestamp}: ${msg.Message} `,
+  );
+}
 ```
+
+`JournalEvent` and `JournalEvent_BI` combine all events into one. It is essentially a huge Type union.
+All events have two shared properties: `timestamp` and `event`. You can filter on the `event` field to expose the other properties.
+![Example image showing strong typing](README-src/strongTypingExample.png)
+![Second example detailling that you do get the event's structure](README-src/strongTypingExample2.png)
 
 ## Versioning
 
