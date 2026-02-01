@@ -5,8 +5,6 @@ This uses https://jixxed.github.io/ed-journal-schemas/ as its source of Schemas.
 
 Besides the Type definitions, this module contains 2 helper functions which will parse the Journal Entry with either BigInts or regular IEEE 754 64-bit floats for integers.
 
-This repository contains the conversion and generator code for https://www.npmjs.com/package/@elite-dangerous-plugin-framework/journal.
-
 ## Installation
 
 ```sh

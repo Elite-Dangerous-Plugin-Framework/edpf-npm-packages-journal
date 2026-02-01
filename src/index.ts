@@ -24,4 +24,41 @@ export function parseWithBigInt(event: string): JournalEvent_BI {
   }) as any);
 }
 
+/**
+ * Stringifies a JSON that may contain BigInt's. Any BigInt is serialized as a number without compromising on accuracy.
+ *
+ * This is done by stringifying the BigInt with a randomly generated marker, followed by replacing said marker, including the quotes escaping the string.
+ * This function can be seen as the inverse to {@link parseWithBigInt}.
+ *
+ * @param input a JSON-safe object containing BigInt's.
+ */
+export function stringifyBigIntJSON(input: any): string {
+  const randomString = crypto.randomUUID();
+
+  const bigIntPrefix = randomString + "_";
+  const bigIntSuffix = "_" + randomString;
+  const jsonWithMarkers = JSON.stringify(input, (_, val) => {
+    if (typeof val !== "bigint") {
+      return val;
+    }
+    return bigIntPrefix + val.toString() + bigIntSuffix;
+  });
+
+  // this turns
+  // {
+  //   "systemAddress": "someUUID_12345_someUUID"
+  // }
+  // into
+  // {
+  //   "systemAddress": 12345
+  // }
+  // such that the consumer can handle it as a number or do some special stuff to handle as BigInt also
+
+  // we dont use a stable marker such as _BIGINT because this could lead to a payload being broken if said string actually appears (e.g. Ship Name).
+  // random UUIDv4s are considered impropable to collide
+  return jsonWithMarkers
+    .replaceAll(`"${bigIntPrefix}`, "")
+    .replaceAll(`${bigIntSuffix}"`, "");
+}
+
 export { type JournalEvent, type JournalEvent_BI };
