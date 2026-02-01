@@ -37,6 +37,7 @@ jobs:
           }
       - name: Build the package
         run: bun run ./generate.ts
-
+      - name: Login against npm using OIDC
+        run: bunx npm login --auth-type=oidc --registry=https://registry.npmjs.org
       - name: Release the package with npm public (using bunx)
         run: bunx npm publish --provenance --access public
