@@ -23,16 +23,18 @@ jobs:
           fetch-depth: 0   # required for tagging + pushing
           # We MUST use a PAT here because Github does not let you chain events. E.g. an action triggered by CI will not trigger another pipeline.
           token: ${{ secrets.PAT_TOKEN }}
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          bun-version: latest
+          node-version: 24
+          registry-url: https://registry.npmjs.org/
+          always-auth: false
 
       - name: Configure git author
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
       - name: Install deps
-        run: bun ci
+        run: npm ci
       - name: Bump Schema if there is an update and generate relevant commit / tag
-        run: bun run ./bumpSubmoduleAndVersion.ts
+        run: npx zx ./bumpSubmoduleAndVersion.ts

@@ -1,4 +1,6 @@
 import type { JournalEvent, JournalEvent_BI } from "./generated/index.js";
+export * from "./generated/events.js";
+export * from "./generated/events.bi.js";
 
 /**
  * Use this converter if you do not care about precision of numbers - primarily if you do not need to handle IDs (e.g. System Adresses).

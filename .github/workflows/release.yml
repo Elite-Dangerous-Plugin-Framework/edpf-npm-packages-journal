@@ -19,22 +19,24 @@ jobs:
         with:
           submodules: true
           fetch-depth: 0  
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          bun-version: latest
+          node-version: 24
+          registry-url: https://registry.npmjs.org/
+          always-auth: false
       - name: Install deps
-        run: bun ci
+        run: npm ci
       - name: Assert Tag matches Package.json Version
         run: |
           TAG="${GITHUB_REF#refs/tags/}"
-          PKG_VERSION=$(bun -p "require('./package.json').version")
+          PKG_VERSION=$(node -p "require('./package.json').version")
           [ "$TAG" = "$PKG_VERSION" ] || {
             echo "Tag ($TAG) does not match package.json version ($PKG_VERSION)"
             exit 1
           }
       - name: Build the package
-        run: bun run ./generate.ts
+        run: npm run build
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
