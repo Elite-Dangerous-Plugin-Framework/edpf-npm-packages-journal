@@ -1,12 +1,13 @@
-#!/usr/bin/env bun
+#!/usr/bin/env zx
 
 import { compile } from "json-schema-to-typescript";
 import $RefParser from "@apidevtools/json-schema-ref-parser";
 import { glob } from "glob";
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
-import { $ } from "bun";
+import { $ } from "zx";
 import { readFile } from "node:fs/promises";
+import {} from "tsdown";
 
 function injectBigint(schema: any): void {
   if (!schema || typeof schema !== "object") return;
@@ -71,8 +72,8 @@ const barrelFileContents: string[] = [
 const eventNames: string[] = [];
 // Mapping of event name to file name
 const packageJsonExportsBlockData: Record<string, string> = {
-  ".": "./dist/index.d.ts"
-} 
+  ".": "./dist/index.d.ts",
+};
 
 for (const schemaPath of journalEntryPoints) {
   if (basename(join(schemaPath, "..")) === "common") {
@@ -90,7 +91,9 @@ for (const schemaPath of journalEntryPoints) {
   // We define the event field to be a literal, so one can just e.g.
   // obj.event === "Loadout" and TS knows we have a Loadout event using the Loadout structure
   const name = basename(schemaPath, ".json");
-  const allOfIds = (schema.allOf ?? []).findIndex((e) => (e as any).title === "Event");
+  const allOfIds = (schema.allOf ?? []).findIndex(
+    (e) => (e as any).title === "Event",
+  );
   if (allOfIds >= 0) {
     (schema as any).allOf[allOfIds].properties.event.const = name;
     delete (schema as any).allOf[allOfIds].properties.event.examples;
@@ -116,8 +119,10 @@ for (const schemaPath of journalEntryPoints) {
   barrelFileContents.push(`import ${name}Event from './${name}.js'`);
   barrelFileContents.push(`import ${name}Event_BI from './${name}.bi.js'`);
   eventNames.push(name + "Event");
-  packageJsonExportsBlockData["./events/"+name] = `./dist/generated/${name}.d.ts`
-  packageJsonExportsBlockData["./events/bi/"+name] = `./dist/generated/${name}.bi.d.ts`
+  packageJsonExportsBlockData["./events/" + name] =
+    `./dist/generated/${name}.d.ts`;
+  packageJsonExportsBlockData["./events/bi/" + name] =
+    `./dist/generated/${name}.bi.d.ts`;
 }
 
 // at the end, create a barrel file
@@ -129,20 +134,3 @@ barrelFileContents.push(
 );
 
 await writeFile(join(generatedRoot, "index.ts"), barrelFileContents.join("\n"));
-
-await Bun.build({
-  outdir: "dist",
-  format: "esm",
-  entrypoints: ["./src/index.ts"],
-  target: "browser",
-  sourcemap: "external"
-})
-
-await $`tsc --emitDeclarationOnly --outDir dist`
-
-// Finally we rebuild the exports block for the package.json which allows us to export each event individually
-
-const packageJson = JSON.parse(await readFile("package.json", "utf-8"))
-
-packageJson.exports = Object.fromEntries(Object.entries(packageJsonExportsBlockData).map(([k,v]) => [k, {types: v}]))
-await writeFile("package.json", JSON.stringify(packageJson, undefined, 2))
