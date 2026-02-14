@@ -5,9 +5,6 @@ import $RefParser from "@apidevtools/json-schema-ref-parser";
 import { glob } from "glob";
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
-import { $ } from "zx";
-import { readFile } from "node:fs/promises";
-import {} from "tsdown";
 
 function injectBigint(schema: any): void {
   if (!schema || typeof schema !== "object") return;
