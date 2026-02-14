@@ -1,7 +1,7 @@
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  entry: ["src/index.ts", "src/generated/**.ts"],
+  entry: ["src/index.ts", "src/generated/(index|events.bi|events).ts"],
   platform: "browser",
   unbundle: true,
   clean: true,

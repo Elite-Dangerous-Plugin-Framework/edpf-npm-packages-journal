@@ -68,6 +68,44 @@ All events have two shared properties: `timestamp` and `event`. You can filter o
 ![Example image showing strong typing](README-src/strongTypingExample.png)
 ![Second example detailling that you do get the event's structure](README-src/strongTypingExample2.png)
 
+### BigInt Handling
+
+If you are using the `_BI` events and need to pass them to another consumer, you can make sure of `stringifyBigIntJSON` function on the default export.
+
+```ts
+import { stringifyBigIntJSON } from "@elite-dangerous-plugin-framework/journal";
+
+const value = {
+  hello: "world",
+  someFloat: 42.3,
+  someBigInt: 123n,
+};
+
+console.log(stringifyBigIntJSON(value));
+//  {
+//    "hello": "world",
+//    "someFloat": 42.3,
+//    "someBigInt": 123
+//  }
+//  (without minification)
+```
+
+#### Importing events
+
+The default import only contains a union containing all simple or all bi events.
+You can import specific events from
+
+- `@elite-dangerous-plugin-framework/journal/generated/events`
+- `@elite-dangerous-plugin-framework/journal/generated/events.bi`
+
+```ts
+import { type UndockedEvent_BI } from "@elite-dangerous-plugin-framework/journal/generated/events.bi";
+
+function doSomethingWithUndockedEvent(ev: UndockedEvent_BI) {
+  // ...
+}
+```
+
 ## Versioning
 
 Other than the other packages that reside in the `@elite-dangerous-plugin-framework` namespace, this package uses calendar-versioning.

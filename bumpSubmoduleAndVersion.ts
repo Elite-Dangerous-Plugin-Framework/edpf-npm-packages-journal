@@ -8,7 +8,7 @@
  *
  */
 
-import { $ } from "bun";
+import { $ } from "zx";
 import { writeFile } from "node:fs/promises";
 import { readFile } from "node:fs/promises";
 import { exit } from "node:process";
