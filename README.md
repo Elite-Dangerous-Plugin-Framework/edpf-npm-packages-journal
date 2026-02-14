@@ -92,16 +92,21 @@ console.log(stringifyBigIntJSON(value));
 
 #### Importing events
 
-The default import only contains a union containing all simple or all bi events.
-You can import specific events from
+The default import contains all names events, both "simple" events and big-int events. Alternatively, the following imports are scoped to either simple or bigint events:
 
 - `@elite-dangerous-plugin-framework/journal/generated/events`
 - `@elite-dangerous-plugin-framework/journal/generated/events.bi`
 
 ```ts
 import { type UndockedEvent_BI } from "@elite-dangerous-plugin-framework/journal/generated/events.bi";
+import { type UndockedEvent } from "@elite-dangerous-plugin-framework/journal/generated/events";
+// or
+import {
+  type UndockedEvent_BI,
+  type UndockedEvent,
+} from "@elite-dangerous-plugin-framework/journal";
 
-function doSomethingWithUndockedEvent(ev: UndockedEvent_BI) {
+function doSomethingWithUndockedEvent(ev: UndockedEvent_BI | UndockedEvent) {
   // ...
 }
 ```
